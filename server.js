@@ -14,8 +14,6 @@ const io = socketIo(server, {
 let users = [];
 app.use(cors());
 io.on("connection", (socket) => {
-  console.log("A user has connected");
-
   socket.on("click", (data) => {
     let isUser;
     const id = data.id;
@@ -40,9 +38,6 @@ io.on("connection", (socket) => {
         return el;
       }
     });
-    console.log("==================");
-    console.log(users);
-    console.log("==================");
   });
 
   socket.on("get_calories", (data) => {
@@ -59,16 +54,12 @@ io.on("connection", (socket) => {
       id,
     });
     users = [...users, { nickname: data.nickname, id, calories: 0 }];
-
-    console.log(users);
-  });
-  socket.on("disconnect", () => {
-    console.log("A user has disconnected");
   });
 });
 
 app.get("/leaderboard", (req, res) => {
-  const sortedLeaderboard = users
+  let filteredUsers = users.filter((user) => user.nickname);
+  const sortedLeaderboard = filteredUsers
     .sort((a, b) => b.calories - a.calories)
     .slice(0, 50);
 
